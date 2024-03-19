@@ -5,6 +5,7 @@ import org.myungkeun.spring_security.entities.Role;
 import org.myungkeun.spring_security.entities.User;
 import org.myungkeun.spring_security.payload.AuthRequest;
 import org.myungkeun.spring_security.payload.UserLoginRequest;
+import org.myungkeun.spring_security.payload.UserLoginResponse;
 import org.myungkeun.spring_security.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+
     public String registerUser(AuthRequest authRequest) {
         var user = User.builder()
                 .username(authRequest.getUsername())
@@ -28,7 +31,7 @@ public class AuthService {
         return "user registered successfully";
     }
 
-    public String loggedInUser(UserLoginRequest userLoginRequest) {
+    public UserLoginResponse loggedInUser(UserLoginRequest userLoginRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         userLoginRequest.getEmail(),
@@ -37,6 +40,9 @@ public class AuthService {
         );
         var user = userRepository.findByEmail(userLoginRequest.getEmail())
                 .orElseThrow();
-        return user.getEmail();
+        var jwtToken = jwtService.generateToken(user);
+        return UserLoginResponse.builder()
+                .accessToken(jwtToken)
+                .build();
     }
 }
