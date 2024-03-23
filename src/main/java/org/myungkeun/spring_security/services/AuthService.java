@@ -8,10 +8,7 @@ import org.myungkeun.spring_security.entities.Role;
 import org.myungkeun.spring_security.entities.Token;
 import org.myungkeun.spring_security.entities.TokenType;
 import org.myungkeun.spring_security.entities.User;
-import org.myungkeun.spring_security.payload.AuthRequest;
-import org.myungkeun.spring_security.payload.UserInfoResponse;
-import org.myungkeun.spring_security.payload.UserLoginRequest;
-import org.myungkeun.spring_security.payload.UserLoginResponse;
+import org.myungkeun.spring_security.payload.*;
 import org.myungkeun.spring_security.repositories.TokenRepository;
 import org.myungkeun.spring_security.repositories.UserRepository;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +28,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
 
     public String registerUser(AuthRequest authRequest) {
@@ -41,6 +39,11 @@ public class AuthService {
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
+        MailRequest mailRequest = new MailRequest();
+        mailRequest.setAddress(authRequest.getEmail());
+        mailRequest.setSubject("Welcome myungkeun world");
+        mailRequest.setText("환영합니다"+authRequest.getUsername()+"님");
+        emailService.mailsend(mailRequest);
         return "user registered successfully";
     }
 
