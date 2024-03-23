@@ -1,14 +1,14 @@
 package org.myungkeun.spring_security.Controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.myungkeun.spring_security.entities.User;
+import org.myungkeun.spring_security.payload.UserInfoResponse;
 import org.myungkeun.spring_security.services.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/user")
@@ -16,8 +16,11 @@ import java.security.Principal;
 public class UserController {
     private final AuthService authService;
     @GetMapping()
-    public ResponseEntity<User> getUserInfoByToken(Principal connectedUser) {
-        System.out.println(connectedUser);
-        return ResponseEntity.ok(authService.getUseInfoByToken(connectedUser));
+    public ResponseEntity<UserInfoResponse> getUserInfoByToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        return ResponseEntity.ok(authService.getProfileInfoByToken(request, response));
+
     }
 }

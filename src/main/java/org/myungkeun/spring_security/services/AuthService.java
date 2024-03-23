@@ -9,6 +9,7 @@ import org.myungkeun.spring_security.entities.Token;
 import org.myungkeun.spring_security.entities.TokenType;
 import org.myungkeun.spring_security.entities.User;
 import org.myungkeun.spring_security.payload.AuthRequest;
+import org.myungkeun.spring_security.payload.UserInfoResponse;
 import org.myungkeun.spring_security.payload.UserLoginRequest;
 import org.myungkeun.spring_security.payload.UserLoginResponse;
 import org.myungkeun.spring_security.repositories.TokenRepository;
@@ -62,12 +63,6 @@ public class AuthService {
                 .build();
     }
 
-    public User getUseInfoByToken(Principal connectedUser) {
-
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        return user;
-    }
-
     private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
@@ -117,6 +112,26 @@ public class AuthService {
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
-
+    }
+    public UserInfoResponse getProfileInfoByToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    )  {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String userEmail;
+        final String accessToken;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("No user");
+        }
+        accessToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(accessToken);
+        var user = this.userRepository.findByEmail(userEmail)
+                .orElseThrow();
+        var userInfoResponse = UserInfoResponse.builder()
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .role(user.getRole())
+                .build();
+        return userInfoResponse;
     }
 }
