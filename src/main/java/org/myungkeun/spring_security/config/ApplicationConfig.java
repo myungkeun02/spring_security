@@ -1,9 +1,11 @@
-package org.myungkeun.spring_security.Config;
+package org.myungkeun.spring_security.config;
 
 import lombok.RequiredArgsConstructor;
+import org.myungkeun.spring_security.audting.ApplicationAuditAware;
 import org.myungkeun.spring_security.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -29,6 +31,11 @@ public class ApplicationConfig {
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
+    }
+
+    @Bean
+    public AuditorAware<Long> auditorAware() {
+        return new ApplicationAuditAware();
     }
 
     @Bean

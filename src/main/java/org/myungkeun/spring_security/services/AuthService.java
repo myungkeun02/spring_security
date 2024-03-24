@@ -116,26 +116,6 @@ public class AuthService {
             }
         }
     }
-    public UserInfoResponse getProfileInfoByToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    )  {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String userEmail;
-        final String accessToken;
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("No user");
-        }
-        accessToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(accessToken);
-        var user = this.userRepository.findByEmail(userEmail)
-                .orElseThrow();
-        var userInfoResponse = UserInfoResponse.builder()
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .role(user.getRole())
-                .build();
-        return userInfoResponse;
-    }
+
 
 }

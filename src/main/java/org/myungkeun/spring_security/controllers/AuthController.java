@@ -1,21 +1,17 @@
-package org.myungkeun.spring_security.Controllers;
+package org.myungkeun.spring_security.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.myungkeun.spring_security.entities.User;
 import org.myungkeun.spring_security.payload.AuthRequest;
-import org.myungkeun.spring_security.payload.MailRequest;
 import org.myungkeun.spring_security.payload.UserLoginRequest;
 import org.myungkeun.spring_security.payload.UserLoginResponse;
 import org.myungkeun.spring_security.services.AuthService;
-import org.myungkeun.spring_security.services.EmailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/auth")

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.myungkeun.spring_security.entities.User;
 import org.myungkeun.spring_security.payload.UpdatePasswordRequest;
+import org.myungkeun.spring_security.payload.UserInfoResponse;
 import org.myungkeun.spring_security.repositories.UserRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,20 +25,21 @@ public class UserService {
 
     public String updatePassword(
             UpdatePasswordRequest updatePasswordRequest,
-            HttpServletRequest request,
-            HttpServletResponse response
+//            HttpServletRequest request,
+//            HttpServletResponse response
+            Principal connectedUser
     ) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String userEmail;
-        final String accessToken;
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("No user");
-        }
-        accessToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(accessToken);
-        var user = this.userRepository.findByEmail(userEmail)
-                .orElseThrow();
-//        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+//        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+//        final String userEmail;
+//        final String accessToken;
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//            throw new RuntimeException("No user");
+//        }
+//        accessToken = authHeader.substring(7);
+//        userEmail = jwtService.extractUsername(accessToken);
+//        var user = this.userRepository.findByEmail(userEmail)
+//                .orElseThrow();
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         if (!passwordEncoder.matches(updatePasswordRequest.getCurrentPassword(), user.getPassword())) {
             throw new IllegalStateException("Wrong password");
         }
@@ -47,5 +49,28 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
         userRepository.save(user);
         return "updated password";
+    }
+    public UserInfoResponse getProfileInfoByToken(
+//            HttpServletRequest request,
+//            HttpServletResponse response
+            Principal connectedUser
+    )  {
+//        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+//        final String userEmail;
+//        final String accessToken;
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//            throw new RuntimeException("No user");
+//        }
+//        accessToken = authHeader.substring(7);
+//        userEmail = jwtService.extractUsername(accessToken);
+//        var user = this.userRepository.findByEmail(userEmail)
+//                .orElseThrow();
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        var userInfoResponse = UserInfoResponse.builder()
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .role(user.getRole())
+                .build();
+        return userInfoResponse;
     }
 }

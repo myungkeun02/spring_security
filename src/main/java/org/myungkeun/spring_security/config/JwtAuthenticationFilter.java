@@ -1,4 +1,4 @@
-package org.myungkeun.spring_security.Config;
+package org.myungkeun.spring_security.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,9 +1,8 @@
-package org.myungkeun.spring_security.Controllers;
+package org.myungkeun.spring_security.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Fetch;
 import org.myungkeun.spring_security.payload.UpdatePasswordRequest;
 import org.myungkeun.spring_security.payload.UserInfoResponse;
 import org.myungkeun.spring_security.services.AuthService;
@@ -22,18 +21,17 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<UserInfoResponse> getUserInfoByToken(
-            HttpServletRequest request,
-            HttpServletResponse response
+        Principal connectedUser
     ) {
-        return ResponseEntity.ok(authService.getProfileInfoByToken(request, response));
+        return ResponseEntity.ok(userService.getProfileInfoByToken(connectedUser));
     }
 
     @PatchMapping("/change/password")
     public ResponseEntity<String> updatePassword(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            @RequestBody UpdatePasswordRequest passwordRequest
+            Principal connectedUser,
+            @RequestBody UpdatePasswordRequest request
     ) {
-        return ResponseEntity.ok(userService.updatePassword(passwordRequest, request, response));
+
+        return ResponseEntity.ok(userService.updatePassword(request, connectedUser));
     }
 }

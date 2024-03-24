@@ -1,4 +1,4 @@
-package org.myungkeun.spring_security.Config;
+package org.myungkeun.spring_security.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
